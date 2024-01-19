@@ -1,0 +1,23 @@
+/* styles.css or your component's styles */
+body {
+  margin: 0;
+  padding: 0;
+}
+
+main {
+  padding: 20px; /* Adjust the padding as needed */
+  width:80%;
+  margin:auto;
+}
+
+app-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
