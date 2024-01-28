@@ -26,6 +26,10 @@ export class PostListComponent implements OnInit, OnDestroy {
     constructor(public postsService: PostsService){
         // this.postsServices = postsService
     }
+
+    onDelete(postId: string){
+       this.postsService.deletePost(postId);
+    }
     //Angular executes this when its done
     ngOnInit(){
         //trigger the http request
