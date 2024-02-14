@@ -51,6 +51,8 @@ app.post("/api/posts", (req, res) => {
   });
 });
 
+app.put("/api/posts/:id", (req, res) => {});
+
 app.get("/api/posts", (req, res) => {
   Post.find().then((documents) => {
     console.log(documents);

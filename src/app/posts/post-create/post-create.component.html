@@ -1,23 +1,38 @@
 <mat-card>
-    <form (submit) = "onAddPost(postForm)" #postForm="ngForm">
-        <mat-form-field>
-            <input matInput ngModel name="title" type="text" placeholder="Post Title" #title="ngModel" required>
-                @if (title.invalid) {
-                    <mat-error>Please Enter a Post Title.</mat-error>
-                }
-        </mat-form-field>
+  <form (submit)="onAddPost(postForm)" #postForm="ngForm">
+    <mat-form-field>
+      <input
+        matInput
+        [ngModel]="post.title"
+        name="title"
+        type="text"
+        placeholder="Post Title"
+        #title="ngModel"
+        required
+      />
+      @if (title.invalid) {
+      <mat-error>Please Enter a Post Title.</mat-error>
+      }
+    </mat-form-field>
 
-        <mat-form-field>
-            <textarea matInput ngModel rows="4" name="content" placeholder="Post Content" #content="ngModel" required></textarea>
-            @if (content.invalid) {
-                    <mat-error>Please Enter post Content</mat-error>
-                }
-        </mat-form-field>
-            <button mat-raised-button color="accent" type="submit">Save Post</button>
-    </form>
+    <mat-form-field>
+      <textarea
+        matInput
+        rows="4"
+        name="content"
+        [ngModel]="post.content"
+        placeholder="Post Content"
+        #content="ngModel"
+        required
+      ></textarea>
+      @if (content.invalid) {
+      <mat-error>Please Enter post Content</mat-error>
+      }
+    </mat-form-field>
+    <button mat-raised-button color="accent" type="submit">Save Post</button>
+  </form>
 </mat-card>
 
+<!-- eventbinding -->
 
-    <!-- eventbinding -->
-    
-    <!-- <p>{{newPost}}</p> -->
+<!-- <p>{{newPost}}</p> -->
