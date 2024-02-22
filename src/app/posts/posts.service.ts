@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Subject } from 'rxjs';
 import { Post } from '../../models/post.model';
 import { map } from 'rxjs/operators';
+import { Router } from '@angular/router';
 //instead of adding service to providers tell angular about it using this.
 @Injectable({ providedIn: 'root' })
 export class PostsService {
@@ -10,7 +11,7 @@ export class PostsService {
   private postsUpdated = new Subject<Post[]>();
 
   //inject HTTP Client service into the posts service.
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   getPosts() {
     //Create a new ARray from the posts above.
@@ -40,7 +41,11 @@ export class PostsService {
   }
 
   getPost(id: string) {
-    return { ...this.posts.find((p) => p.id === id) };
+    //return observable
+    return this.http.get<{ _id: string; title: string; content: string }>(
+      'http://localhost:3000/api/posts/' + id
+    );
+    // return { ...this.posts.find((p) => p.id === id) };
   }
 
   addPost(title: string, content: string) {
@@ -57,11 +62,25 @@ export class PostsService {
         this.posts.push(post);
         //emits a new value of the post Array to the subscribe, next triggers the subscribe callback.
         this.postsUpdated.next([...this.posts]);
+        this.router.navigate(['/']);
       });
   }
 
   updatePost(id: string, title: string, content: string) {
     const post: Post = { id: id, title: title, content: content };
+    this.http
+      .put('http://localhost:3000/api/posts/' + id, post)
+      .subscribe((response) => {
+        //make a copy
+        const updatedPosts = [...this.posts];
+        //find the index
+        const oldPostIndex = updatedPosts.findIndex((p) => p.id === post.id);
+        //update it.
+        updatedPosts[oldPostIndex] = post;
+        this.posts = updatedPosts;
+        this.postsUpdated.next([...this.posts]);
+        this.router.navigate(['/']);
+      });
   }
 
   deletePost(postId: string) {

@@ -1,9 +1,7 @@
-
-
-button{
-    width: 20%;
-    margin-bottom: 10px;
-    margin-left: 12px;
+button {
+  width: 20%;
+  margin-bottom: 10px;
+  margin-left: 12px;
 }
 
 mat-form-field,
@@ -11,3 +9,19 @@ textarea {
   width: 100%;
 }
 
+mat-spinner {
+  margin: auto;
+}
+
+input[type="file"] {
+  visibility: hidden;
+}
+
+.image-preview {
+  height: 5rem;
+  height: 1rem 0;
+}
+
+.image-preview img {
+  height: 100%;
+}
