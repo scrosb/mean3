@@ -14,11 +14,12 @@ const MIME_TYPE_MAP = {
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const isValid = MIME_TYPE_MAP[file.mimetype];
-    let error = new Error("Invalid Mime  Type");
+    let error = new Error("Invalid Mime Type");
+    console.log(isValid);
     if (isValid) {
       error = null;
     }
-    cb(null, "backend/images");
+    cb(error, "backend/images");
   },
   filename: (req, file, cb) => {
     const name = file.originalname.toLowerCase().split(" ").join("-");
@@ -27,52 +28,58 @@ const storage = multer.diskStorage({
   },
 });
 
-router.post("", multer(storage).single("image"), (req, res) => {
+router.post("", multer({ storage: storage }).single("image"), (req, res) => {
+  const url = req.protocol + "://" + req.get("host");
   const post = new Post({
     title: req.body.title,
     content: req.body.content,
+    imagePath: url + "/images/" + req.file.filename,
   });
 
   post.save().then((createdPost) => {
     res.status(201).json({
       message: "Post Added Successfully",
-      postId: createdPost._id,
+      post: {
+        ...createdPost,
+        id: createdPost._id,
+
+        // title: createdPost.title,
+        // content: createdPost.content,
+        // imagePath: createdPost.imagePath,
+      },
     });
   });
 });
 
-router.put("/:id", (req, res, next) => {
-  const post = new Post({
-    _id: req.body.id,
-    title: req.body.title,
-    content: req.body.content,
-  });
-  Post.updateOne({ _id: req.params.id }, post).then((result) => {
-    res.status(200).json({ message: "Update Successful!" });
-  });
-});
+router.put(
+  "/:id",
+  multer({ storage: storage }).single("image"),
+  (req, res, next) => {
+    let imagePath = req.body.imagePath;
+    if (req.file) {
+      const url = req.protocol + "://" + req.get("host");
+      imagePath = url + "/images/" + req.file.filename;
+    }
+    const post = new Post({
+      _id: req.body.id,
+      title: req.body.title,
+      content: req.body.content,
+      imagePath: imagePath,
+    });
+    console.log(post);
+    Post.updateOne({ _id: req.params.id }, post).then((result) => {
+      res.status(200).json({ message: "Update successful!" });
+    });
+  }
+);
 
 router.get("", (req, res) => {
   Post.find().then((documents) => {
-    console.log(documents);
-
     return res.status(200).json({
       message: "Posts fetched Successfully",
       posts: documents,
     });
   });
-  // const posts = [
-  //   {
-  //     id: "asdasdfasdf",
-  //     title: "first server-side post",
-  //     content: "this is coming from the server.",
-  //   },
-  //   {
-  //     id: "asdasdfasdf1234543215",
-  //     title: "second server-side post",
-  //     content: "this is second coming from the server.",
-  //   },
-  // ];
 });
 
 //get post by id to recycle post when we refresh on the edit form.
@@ -100,3 +107,16 @@ router.delete("/:id", async (req, res) => {
 });
 
 module.exports = router;
+
+// const posts = [
+//   {
+//     id: "asdasdfasdf",
+//     title: "first server-side post",
+//     content: "this is coming from the server.",
+//   },
+//   {
+//     id: "asdasdfasdf1234543215",
+//     title: "second server-side post",
+//     content: "this is second coming from the server.",
+//   },
+// ];
